@@ -1,5 +1,5 @@
 # Steam-Sale
-Scraping For Games on Sale from steam and kinguin(Under 10Euros)
+
 It will create an excel in your desired location with steam games in the first sheet and the kinguin games in the second sheet.
 
 To Do(Python File):-
