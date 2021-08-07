@@ -11,8 +11,13 @@ url = "https://www.kinguin.net/services/library/api/v1/products/search"
 info=[]
 i=0
 
+# Each page has 10 items so scrape accordingly and responsibly by changing the x values
+
 for x in range(i,51):
     print(f"Page:- {x}")
+    
+    # Add your user agent
+    
     headers = {
         "cookie": "__cfruid=29c0d11e429364fa36b6b8b45dde248751a3911e-1627912783",
         "authority": "www.kinguin.net",
@@ -21,7 +26,7 @@ for x in range(i,51):
         "cfipcountry": "IN",
         "guest-user-id": "eil4qj7e5v8angafh0tnfkml09n2np",
         "sec-ch-ua-mobile": "?0",
-        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36",
+        "User-Agent":""#User agent,
         "sec-ch-ua": "^\^Chromium^^;v=^\^92^^, ^\^"
     }
     querystring = {"sort":"bestseller.total,DESC","visible":"1","active":"1","size":"10","page":f"{x}","":["",""],"priceTo":"999"}
@@ -31,7 +36,6 @@ for x in range(i,51):
         
     
     items=data["_embedded"]["products"]
-    # print(items[2]["attributes"]["metascore"])
     for item in items:
         externalid=item["externalId"]
         
@@ -59,16 +63,26 @@ for x in range(i,51):
 df=pd.DataFrame(info)
 print(df.columns)
 df=df.sort_values("Price")
-df.to_excel(r"C:\Users\Welcome\Desktop\games.xlsx",sheet_name="Kinguin",index=False)
+
+# add your favoured path while saving
+file_path="               "
+
+df.to_excel(file_path,sheet_name="Kinguin",index=False)
 
 print(f"\n Kinguin Done")
 
 info=[]
+
+#Currently scraping for 500 items, fiddle with the x value to scrape for games accordingly
+
 for x in range(0,500,50):
     url = "https://store.steampowered.com/search/results"
     querystring = {"query":"","start":x,"count":"50","dynamic_data":"","sort_by":"_ASC","snr":"1_7_7_2300_7","specials":"1","filter":"topsellers","infinite":"1"}
 
     payload = ""
+    
+    #Add User Agent
+    
     headers = {
         "cookie": "steamCountry=IN%257C08d2be1e9500001d40e2457e1a6ad65f; browserid=2412226565181261149; sessionid=3a7c00541eeacb1187d1139c",
         "Connection": "keep-alive",
@@ -77,7 +91,7 @@ for x in range(0,500,50):
         "X-Prototype-Version": "1.7",
         "X-Requested-With": "XMLHttpRequest",
         "sec-ch-ua-mobile": "?0",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
+        "User-Agent": ""#User agent,
         "sec-ch-ua": "^\^Chromium^^;v=^\^92^^, ^\^"
     }
 
@@ -115,42 +129,16 @@ for x in range(0,500,50):
                 }
         info.append(game)
     print(info[49+x])
+    
+    # Implementing a buffer time in between requests,adjust as per wish
+    
     time.sleep(random.randint(2,4))
-df=pd.read_excel(r"C:\Users\Welcome\Desktop\games.xlsx")
+     
+    # Using the same file to append the steam data to the kinguin file.
+df=pd.read_excel(file_path)
 
-with pd.ExcelWriter(r"C:\Users\Welcome\Desktop\games.xlsx") as writer:
+with pd.ExcelWriter(file_path) as writer:
     pd.DataFrame(info).to_excel(writer,sheet_name="Steam")
     df.to_excel(writer,sheet_name="Kinguin")
 
-mail_content = '''Enjoy Life
-'''
-file = r'C:\Users\Welcome\Desktop\games.xlsx'
-#The mail addresses and password
-sender_address = 'anshtheking01@gmail.com'
-sender_pass = 'EX1SzCrb3IY7'
-receiver_address = 'hardikarora2000@gmail.com'
 
-#Setup the MIME
-message = MIMEMultipart()
-Cc = 'recipient'
-message['From'] = sender_address
-message['To'] = receiver_address
-message['Subject'] = 'Kinguin Game list'
-message['Cc'] = Cc
-server = smtplib.SMTP('smtp.gmail.com',587)
-port = '587'
-fp = open(file, 'rb')
-part = MIMEBase('application','vnd.ms-excel')
-part.set_payload(fp.read())
-fp.close()
-encoders.encode_base64(part)
-part.add_header('Content-Disposition', 'attachment', filename='ngames.xlsx')
-message.attach(MIMEText(mail_content, 'plain'))
-message.attach(part)
-smtp = smtplib.SMTP('smtp.gmail.com',587)
-smtp.ehlo()
-smtp.starttls()
-smtp.login(sender_address,sender_pass)
-smtp.sendmail(sender_address, receiver_address.split(',') + message['Cc'].split(','), message.as_string())
-smtp.quit()
-print("Done")
