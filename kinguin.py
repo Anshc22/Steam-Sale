@@ -1,10 +1,7 @@
 import requests,pandas as pd,time,random
-import smtplib
+
 from bs4 import BeautifulSoup as bs
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
+
 
 url = "https://www.kinguin.net/services/library/api/v1/products/search"
 
@@ -136,6 +133,7 @@ for x in range(0,500,50):
      
     # Using the same file to append the steam data to the kinguin file.
 df=pd.read_excel(file_path)
+
 
 with pd.ExcelWriter(file_path) as writer:
     pd.DataFrame(info).to_excel(writer,sheet_name="Steam")
