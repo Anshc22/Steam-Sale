@@ -100,9 +100,9 @@ for x in range(0,500,50):
     
     for game,idx in zip(games,App_IDS):
         title=game.find(class_="title").text
-        price=game.find(class_="col search_price discounted responsive_secondrow")
+        price=game.find(class_="discount_final_price")
         try:
-            price=int(price.text.strip().replace(",", "")[-4:])
+            price=int(float(price.text.strip().replace(",", "")[1:]))
         except:
             price=int(price.text.strip().replace(",", "")[-3:])
         raw_id=idx["data-ds-itemkey"]
